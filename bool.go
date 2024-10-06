@@ -16,7 +16,6 @@ type BoolQuery struct {
 	shouldItems        []Query
 	minimumShouldMatch string
 	boost              *float64
-	source             []string
 }
 
 // Creates a new bool query.
@@ -26,7 +25,6 @@ func NewBoolQuery() *BoolQuery {
 		mustNotItems: make([]Query, 0),
 		filterItems:  make([]Query, 0),
 		shouldItems:  make([]Query, 0),
-		source:       make([]string, 0),
 	}
 }
 
@@ -62,11 +60,6 @@ func (q *BoolQuery) MinimumShouldMatch(minimumShouldMatch string) *BoolQuery {
 
 func (q *BoolQuery) MinimumNumberShouldMatch(minimumNumberShouldMatch int) *BoolQuery {
 	q.minimumShouldMatch = fmt.Sprintf("%d", minimumNumberShouldMatch)
-	return q
-}
-
-func (q *BoolQuery) Source(field []string) *BoolQuery {
-	q.source = append(q.source, field...)
 	return q
 }
 
@@ -160,9 +153,6 @@ func (q *BoolQuery) Build() (interface{}, error) {
 		boolClause["minimum_should_match"] = q.minimumShouldMatch
 	}
 
-	if len(q.source) > 0 {
-		boolClause["_source"] = q.source
-	}
 	return query, nil
 }
 
@@ -254,9 +244,6 @@ func (q *BoolQuery) BuildJson() (string, error) {
 	}
 	if q.minimumShouldMatch != "" {
 		boolClause["minimum_should_match"] = q.minimumShouldMatch
-	}
-	if len(q.source) > 0 {
-		boolClause["_source"] = q.source
 	}
 	query["bool"] = boolClause
 	dsl["query"] = query
