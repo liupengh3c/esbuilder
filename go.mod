@@ -1,4 +1,4 @@
-module esbuilder
+module github.com/liupengh3c/esbuilder
 
 go 1.23.2
 
