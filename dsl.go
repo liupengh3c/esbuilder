@@ -4,8 +4,8 @@ import jsoniter "github.com/json-iterator/go"
 
 type Dsl struct {
 	QueryDsl Query    `json:"query"`
-	Source   []string `json:"_source"`
-	Size     int64    `json:"size"`
+	Source   []string `json:"_source,omitempty"`
+	Size     int64    `json:"size,omitempty"`
 }
 
 func NewDsl() *Dsl {
@@ -25,21 +25,31 @@ func (dsl *Dsl) SetSize(size int64) {
 	dsl.Size = size
 }
 func (dsl *Dsl) Build() (any, error) {
-	return map[string]any{
-		"query":   dsl.QueryDsl,
-		"_source": dsl.Source,
-		"size":    dsl.Size,
-	}, nil
+	mapQuery, _ := dsl.QueryDsl.Build()
+	mapDsl := map[string]any{
+		"query": mapQuery,
+	}
+	if dsl.Size > 0 {
+		mapDsl["size"] = dsl.Size
+	}
+	if len(dsl.Source) > 0 {
+		mapDsl["_source"] = dsl.Source
+	}
+	return mapDsl, nil
 }
 
 func (dsl *Dsl) BuildJson() string {
 	var json = jsoniter.ConfigCompatibleWithStandardLibrary
 	query, _ := dsl.QueryDsl.Build()
-	last := map[string]any{
-		"query":   query,
-		"size":    dsl.Size,
-		"_source": dsl.Source,
+	mapDsl := map[string]any{
+		"query": query,
 	}
-	strDsl, _ := json.MarshalToString(last)
+	if dsl.Size > 0 {
+		mapDsl["size"] = dsl.Size
+	}
+	if len(dsl.Source) > 0 {
+		mapDsl["_source"] = dsl.Source
+	}
+	strDsl, _ := json.MarshalToString(mapDsl)
 	return strDsl
 }
