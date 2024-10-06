@@ -65,8 +65,8 @@ func (q *BoolQuery) MinimumNumberShouldMatch(minimumNumberShouldMatch int) *Bool
 	return q
 }
 
-func (q *BoolQuery) Source(field string) *BoolQuery {
-	q.source = append(q.source, field)
+func (q *BoolQuery) Source(field []string) *BoolQuery {
+	q.source = append(q.source, field...)
 	return q
 }
 
