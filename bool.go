@@ -1,70 +1,67 @@
 package esbuilder
 
 import (
-	"fmt"
-
 	jsoniter "github.com/json-iterator/go"
 )
 
 // For more details, see:
 // https://www.elastic.co/guide/en/elasticsearch/reference/7.10/query-dsl-bool-query.html
-type BoolQuery struct {
-	Query
-	mustItems          []Query
-	mustNotItems       []Query
-	filterItems        []Query
-	shouldItems        []Query
-	minimumShouldMatch string
+type boolQuery struct {
+	mustItems          []query
+	mustNotItems       []query
+	filterItems        []query
+	shouldItems        []query
+	minimumShouldMatch int
 	boost              *float64
 }
 
 // Creates a new bool query.
-func NewBoolQuery() *BoolQuery {
-	return &BoolQuery{
-		mustItems:    make([]Query, 0),
-		mustNotItems: make([]Query, 0),
-		filterItems:  make([]Query, 0),
-		shouldItems:  make([]Query, 0),
+func NewboolQuery() *boolQuery {
+	return &boolQuery{
+		mustItems:    make([]query, 0),
+		mustNotItems: make([]query, 0),
+		filterItems:  make([]query, 0),
+		shouldItems:  make([]query, 0),
 	}
 }
 
-func (q *BoolQuery) Must(queries ...Query) *BoolQuery {
+func (q *boolQuery) Must(queries ...query) *boolQuery {
 	q.mustItems = append(q.mustItems, queries...)
 	return q
 }
 
-func (q *BoolQuery) MustNot(queries ...Query) *BoolQuery {
+func (q *boolQuery) MustNot(queries ...query) *boolQuery {
 	q.mustNotItems = append(q.mustNotItems, queries...)
 	return q
 }
 
-func (q *BoolQuery) Filter(filters ...Query) *BoolQuery {
+func (q *boolQuery) Filter(filters ...query) *boolQuery {
 	q.filterItems = append(q.filterItems, filters...)
 	return q
 }
 
-func (q *BoolQuery) Should(queries ...Query) *BoolQuery {
+func (q *boolQuery) Should(queries ...query) *boolQuery {
 	q.shouldItems = append(q.shouldItems, queries...)
 	return q
 }
 
-func (q *BoolQuery) Boost(boost float64) *BoolQuery {
+func (q *boolQuery) Boost(boost float64) *boolQuery {
 	q.boost = &boost
 	return q
 }
 
-func (q *BoolQuery) MinimumShouldMatch(minimumShouldMatch string) *BoolQuery {
+func (q *boolQuery) MinimumShouldMatch(minimumShouldMatch int) *boolQuery {
 	q.minimumShouldMatch = minimumShouldMatch
 	return q
 }
 
-func (q *BoolQuery) MinimumNumberShouldMatch(minimumNumberShouldMatch int) *BoolQuery {
-	q.minimumShouldMatch = fmt.Sprintf("%d", minimumNumberShouldMatch)
+func (q *boolQuery) MinimumNumberShouldMatch(minimumNumberShouldMatch int) *boolQuery {
+	q.minimumShouldMatch = minimumNumberShouldMatch
 	return q
 }
 
 // Creates the query source for the bool query.
-func (q *BoolQuery) Build() (interface{}, error) {
+func (q *boolQuery) Build() (interface{}, error) {
 	query := make(map[string]interface{})
 
 	boolClause := make(map[string]interface{})
@@ -149,7 +146,7 @@ func (q *BoolQuery) Build() (interface{}, error) {
 	if q.boost != nil {
 		boolClause["boost"] = *q.boost
 	}
-	if q.minimumShouldMatch != "" {
+	if q.minimumShouldMatch > 0 {
 		boolClause["minimum_should_match"] = q.minimumShouldMatch
 	}
 
@@ -157,7 +154,7 @@ func (q *BoolQuery) Build() (interface{}, error) {
 }
 
 // Creates the query source for the bool query.
-func (q *BoolQuery) BuildJson() (string, error) {
+func (q *boolQuery) BuildJson() (string, error) {
 	var json = jsoniter.ConfigCompatibleWithStandardLibrary
 	query := make(map[string]interface{})
 	dsl := make(map[string]interface{})
@@ -242,7 +239,7 @@ func (q *BoolQuery) BuildJson() (string, error) {
 	if q.boost != nil {
 		boolClause["boost"] = *q.boost
 	}
-	if q.minimumShouldMatch != "" {
+	if q.minimumShouldMatch > 0 {
 		boolClause["minimum_should_match"] = q.minimumShouldMatch
 	}
 	query["bool"] = boolClause

@@ -2,17 +2,17 @@ package esbuilder
 
 // For more details, see
 // https://www.elastic.co/guide/en/elasticsearch/reference/7.10/query-dsl-terms-query.html
-type TermsQuery struct {
+type termsQuery struct {
 	name        string
 	values      []any
-	termsLookup *TermsLookup
+	termsLookup *termsLookup
 	queryName   string
 	boost       *float64
 }
 
-// NewTermsQuery creates and initializes a new TermsQuery.
-func NewTermsQuery(name string, values ...interface{}) *TermsQuery {
-	q := &TermsQuery{
+// NewtermsQuery creates and initializes a new termsQuery.
+func NewTermsQuery(name string, values ...interface{}) *termsQuery {
+	q := &termsQuery{
 		name:   name,
 		values: make([]interface{}, 0),
 	}
@@ -21,8 +21,8 @@ func NewTermsQuery(name string, values ...interface{}) *TermsQuery {
 	}
 	return q
 }
-func NewTermsQueryFromStrings(name string, values ...string) *TermsQuery {
-	q := &TermsQuery{
+func NewtermsQueryFromStrings(name string, values ...string) *termsQuery {
+	q := &termsQuery{
 		name:   name,
 		values: make([]any, 0),
 	}
@@ -33,19 +33,19 @@ func NewTermsQueryFromStrings(name string, values ...string) *TermsQuery {
 }
 
 // TermsLookup adds terms lookup details to the query.
-func (q *TermsQuery) TermsLookup(lookup *TermsLookup) *TermsQuery {
+func (q *termsQuery) TermsLookup(lookup *termsLookup) *termsQuery {
 	q.termsLookup = lookup
 	return q
 }
 
 // Boost sets the boost for this query.
-func (q *TermsQuery) Boost(boost float64) *TermsQuery {
+func (q *termsQuery) Boost(boost float64) *termsQuery {
 	q.boost = &boost
 	return q
 }
 
 // Creates the query source for the term query.
-func (q *TermsQuery) Build() (any, error) {
+func (q *termsQuery) Build() (any, error) {
 	source := make(map[string]interface{})
 	params := make(map[string]interface{})
 	source["terms"] = params

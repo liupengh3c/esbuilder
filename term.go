@@ -2,7 +2,7 @@ package esbuilder
 
 // For details, see
 // https://www.elastic.co/guide/en/elasticsearch/reference/7.10/query-dsl-term-query.html
-type TermQuery struct {
+type termQuery struct {
 	name            string      // Name of the field
 	value           interface{} // Value of the field
 	boost           *float64    // Boost
@@ -10,24 +10,24 @@ type TermQuery struct {
 	queryName       string
 }
 
-// NewTermQuery creates and initializes a new TermQuery.
-func NewTermQuery(name string, value interface{}) *TermQuery {
-	return &TermQuery{name: name, value: value}
+// NewtermQuery creates and initializes a new termQuery.
+func NewTermQuery(name string, value interface{}) *termQuery {
+	return &termQuery{name: name, value: value}
 }
 
 // Boost sets the boost for this query.
-func (q *TermQuery) Boost(boost float64) *TermQuery {
+func (q *termQuery) Boost(boost float64) *termQuery {
 	q.boost = &boost
 	return q
 }
 
-func (q *TermQuery) CaseInsensitive(caseInsensitive bool) *TermQuery {
+func (q *termQuery) CaseInsensitive(caseInsensitive bool) *termQuery {
 	q.caseInsensitive = &caseInsensitive
 	return q
 }
 
 // Source returns JSON for the query.
-func (q *TermQuery) Build() (interface{}, error) {
+func (q *termQuery) Build() (interface{}, error) {
 	source := make(map[string]interface{})
 	tq := make(map[string]interface{})
 	source["term"] = tq

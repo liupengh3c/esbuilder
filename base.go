@@ -1,6 +1,6 @@
 package esbuilder
 
-type Query interface {
+type query interface {
 	// Build returns the map query request.
 	Build() (interface{}, error)
 }

@@ -2,7 +2,7 @@ package esbuilder
 
 // For details, see
 // https://www.elastic.co/guide/en/elasticsearch/reference/7.10/query-dsl-range-query.html
-type RangeQuery struct {
+type rangeQuery struct {
 	name     string
 	gt       any
 	lt       any
@@ -14,50 +14,50 @@ type RangeQuery struct {
 	relation string
 }
 
-func NewRangeQuery(name string) *RangeQuery {
-	return &RangeQuery{name: name}
+func NewRangeQuery(name string) *rangeQuery {
+	return &rangeQuery{name: name}
 }
-func (q *RangeQuery) Gt(value interface{}) *RangeQuery {
+func (q *rangeQuery) Gt(value interface{}) *rangeQuery {
 	q.gt = value
 	return q
 }
-func (q *RangeQuery) Gte(value interface{}) *RangeQuery {
+func (q *rangeQuery) Gte(value interface{}) *rangeQuery {
 	q.gte = value
 	return q
 }
-func (q *RangeQuery) Lt(value interface{}) *RangeQuery {
+func (q *rangeQuery) Lt(value interface{}) *rangeQuery {
 	q.lt = value
 	return q
 }
-func (q *RangeQuery) Lte(value interface{}) *RangeQuery {
+func (q *rangeQuery) Lte(value interface{}) *rangeQuery {
 	q.lte = value
 
 	return q
 }
-func (q *RangeQuery) Boost(boost float64) *RangeQuery {
+func (q *rangeQuery) Boost(boost float64) *rangeQuery {
 	q.boost = &boost
 	return q
 }
-func (q *RangeQuery) TimeZone(timeZone string) *RangeQuery {
+func (q *rangeQuery) TimeZone(timeZone string) *rangeQuery {
 	q.timeZone = timeZone
 	return q
 }
 
 // Format is used for date fields. In that case, we can set the format
 // to be used instead of the mapper format.
-func (q *RangeQuery) Format(format string) *RangeQuery {
+func (q *rangeQuery) Format(format string) *rangeQuery {
 	q.format = format
 	return q
 }
 
 // Indicates how the range query matches values for range fields.
-func (q *RangeQuery) Relation(relation string) *RangeQuery {
+func (q *rangeQuery) Relation(relation string) *rangeQuery {
 	q.relation = relation
 	return q
 }
 
 // Source returns JSON for the query.
-func (q *RangeQuery) Build() (interface{}, error) {
+func (q *rangeQuery) Build() (interface{}, error) {
 	source := make(map[string]interface{})
 
 	rangeQ := make(map[string]interface{})

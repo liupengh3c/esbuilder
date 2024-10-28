@@ -2,29 +2,29 @@ package esbuilder
 
 import jsoniter "github.com/json-iterator/go"
 
-type Dsl struct {
-	QueryDsl Query    `json:"query"`
+type dsl struct {
+	QueryDsl query    `json:"query"`
 	Source   []string `json:"_source,omitempty"`
 	Size     int64    `json:"size,omitempty"`
 }
 
-func NewDsl() *Dsl {
-	return &Dsl{
+func NewDsl() *dsl {
+	return &dsl{
 		Source: make([]string, 0),
 	}
 }
 
-func (dsl *Dsl) AddSource(source []string) {
+func (dsl *dsl) AddSource(source []string) {
 	dsl.Source = append(dsl.Source, source...)
 }
-func (dsl *Dsl) SetQuery(query Query) {
+func (dsl *dsl) SetQuery(query query) {
 	dsl.QueryDsl = query
 }
 
-func (dsl *Dsl) SetSize(size int64) {
+func (dsl *dsl) SetSize(size int64) {
 	dsl.Size = size
 }
-func (dsl *Dsl) Build() (any, error) {
+func (dsl *dsl) Build() (any, error) {
 	mapQuery, _ := dsl.QueryDsl.Build()
 	mapDsl := map[string]any{
 		"query": mapQuery,
@@ -38,7 +38,7 @@ func (dsl *Dsl) Build() (any, error) {
 	return mapDsl, nil
 }
 
-func (dsl *Dsl) BuildJson() string {
+func (dsl *dsl) BuildJson() string {
 	var json = jsoniter.ConfigCompatibleWithStandardLibrary
 	query, _ := dsl.QueryDsl.Build()
 	mapDsl := map[string]any{
