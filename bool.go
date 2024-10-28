@@ -16,7 +16,7 @@ type boolQuery struct {
 }
 
 // Creates a new bool query.
-func NewboolQuery() *boolQuery {
+func NewBoolQuery() *boolQuery {
 	return &boolQuery{
 		mustItems:    make([]query, 0),
 		mustNotItems: make([]query, 0),
