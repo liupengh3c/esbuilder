@@ -21,7 +21,7 @@ func NewTermsQuery(name string, values ...interface{}) *termsQuery {
 	}
 	return q
 }
-func NewtermsQueryFromStrings(name string, values ...string) *termsQuery {
+func NewTermsQueryFromStrings(name string, values ...string) *termsQuery {
 	q := &termsQuery{
 		name:   name,
 		values: make([]any, 0),
