@@ -39,19 +39,21 @@ func (q *knnQuery) Filter(filter query) *knnQuery {
 
 func (q *knnQuery) Build() (any, error) {
 	query := make(map[string]any)
+	knnQuery := make(map[string]any)
 	if q.vecotorName == "" || len(q.vector) == 0 {
 		return query, fmt.Errorf("vector_name or vector can no be empty")
 	}
 	if q.ef == 0 {
 		q.ef = 256
 	}
-	query[q.vecotorName] = map[string]any{
+	knnQuery[q.vecotorName] = map[string]any{
 		"vector": q.vector,
 		"k":      q.k,
 		"ef":     q.ef,
 	}
 	if q.filterItem != nil {
-		query[q.vecotorName].(map[string]any)["filter"] = q.filterItem
+		knnQuery[q.vecotorName].(map[string]any)["filter"] = q.filterItem
 	}
+	query["knn"] = knnQuery
 	return query, nil
 }
