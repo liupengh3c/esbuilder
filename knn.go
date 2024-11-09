@@ -52,7 +52,8 @@ func (q *knnQuery) Build() (any, error) {
 		"ef":     q.ef,
 	}
 	if q.filterItem != nil {
-		knnQuery[q.vecotorName].(map[string]any)["filter"] = q.filterItem
+		filter, _ := q.filterItem.Build()
+		knnQuery[q.vecotorName].(map[string]any)["filter"] = filter
 	}
 	query["knn"] = knnQuery
 	return query, nil
