@@ -31,8 +31,8 @@ func (dsl *dsl) SetSize(size int64) {
 func (dsl *dsl) SetFrom(from int64) {
 	dsl.From = from
 }
-func (dsl *dsl) SetOrder(order []query) {
-	dsl.OrderItems = append(dsl.OrderItems, order...)
+func (dsl *dsl) SetOrder(order query) {
+	dsl.OrderItems = append(dsl.OrderItems, order)
 }
 func (dsl *dsl) Build() (any, error) {
 	mapQuery, _ := dsl.QueryDsl.Build()
