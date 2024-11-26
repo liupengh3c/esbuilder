@@ -3,15 +3,17 @@ package esbuilder
 import jsoniter "github.com/json-iterator/go"
 
 type dsl struct {
-	QueryDsl query    `json:"query"`
-	Source   []string `json:"_source,omitempty"`
-	Size     int64    `json:"size,omitempty"`
-	From     int64    `json:"from,omitempty"`
+	QueryDsl   query    `json:"query"`
+	Source     []string `json:"_source,omitempty"`
+	Size       int64    `json:"size,omitempty"`
+	From       int64    `json:"from,omitempty"`
+	OrderItems []query  `json:"sort,omitempty"`
 }
 
 func NewDsl() *dsl {
 	return &dsl{
-		Source: make([]string, 0),
+		Source:     make([]string, 0),
+		OrderItems: make([]query, 0),
 	}
 }
 
@@ -46,6 +48,24 @@ func (dsl *dsl) Build() (any, error) {
 	if len(dsl.Source) > 0 {
 		mapDsl["_source"] = dsl.Source
 	}
+	// sort
+	if len(dsl.OrderItems) == 1 {
+		src, err := dsl.OrderItems[0].Build()
+		if err != nil {
+			return nil, err
+		}
+		mapDsl["sort"] = src
+	} else if len(dsl.OrderItems) > 1 {
+		var clauses []interface{}
+		for _, subQuery := range dsl.OrderItems {
+			src, err := subQuery.Build()
+			if err != nil {
+				return nil, err
+			}
+			clauses = append(clauses, src)
+		}
+		mapDsl["sort"] = clauses
+	}
 	return mapDsl, nil
 }
 
@@ -64,6 +84,24 @@ func (dsl *dsl) BuildJson() string {
 
 	if len(dsl.Source) > 0 {
 		mapDsl["_source"] = dsl.Source
+	}
+	// sort
+	if len(dsl.OrderItems) == 1 {
+		src, err := dsl.OrderItems[0].Build()
+		if err != nil {
+			return ""
+		}
+		mapDsl["sort"] = src
+	} else if len(dsl.OrderItems) > 1 {
+		var clauses []interface{}
+		for _, subQuery := range dsl.OrderItems {
+			src, err := subQuery.Build()
+			if err != nil {
+				return ""
+			}
+			clauses = append(clauses, src)
+		}
+		mapDsl["sort"] = clauses
 	}
 	strDsl, _ := json.MarshalToString(mapDsl)
 	return strDsl
