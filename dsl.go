@@ -6,6 +6,7 @@ type dsl struct {
 	QueryDsl query    `json:"query"`
 	Source   []string `json:"_source,omitempty"`
 	Size     int64    `json:"size,omitempty"`
+	From     int64    `json:"from,omitempty"`
 }
 
 func NewDsl() *dsl {
@@ -24,6 +25,11 @@ func (dsl *dsl) SetQuery(query query) {
 func (dsl *dsl) SetSize(size int64) {
 	dsl.Size = size
 }
+
+func (dsl *dsl) SetFrom(from int64) {
+	dsl.From = from
+}
+
 func (dsl *dsl) Build() (any, error) {
 	mapQuery, _ := dsl.QueryDsl.Build()
 	mapDsl := map[string]any{
@@ -32,6 +38,11 @@ func (dsl *dsl) Build() (any, error) {
 	if dsl.Size > 0 {
 		mapDsl["size"] = dsl.Size
 	}
+
+	if dsl.From > 0 {
+		mapDsl["from"] = dsl.From
+	}
+
 	if len(dsl.Source) > 0 {
 		mapDsl["_source"] = dsl.Source
 	}
@@ -47,6 +58,10 @@ func (dsl *dsl) BuildJson() string {
 	if dsl.Size > 0 {
 		mapDsl["size"] = dsl.Size
 	}
+	if dsl.From > 0 {
+		mapDsl["from"] = dsl.From
+	}
+
 	if len(dsl.Source) > 0 {
 		mapDsl["_source"] = dsl.Source
 	}

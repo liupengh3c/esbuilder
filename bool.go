@@ -11,6 +11,7 @@ type boolQuery struct {
 	mustNotItems       []query
 	filterItems        []query
 	shouldItems        []query
+	orderItems         []query
 	minimumShouldMatch int
 	boost              *float64
 }
@@ -22,6 +23,8 @@ func NewBoolQuery() *boolQuery {
 		mustNotItems: make([]query, 0),
 		filterItems:  make([]query, 0),
 		shouldItems:  make([]query, 0),
+		orderItems:   make([]query, 0),
+		boost:        nil,
 	}
 }
 
@@ -123,7 +126,24 @@ func (q *boolQuery) Build() (interface{}, error) {
 		}
 		boolClause["filter"] = clauses
 	}
-
+	// sort
+	if len(q.shouldItems) == 1 {
+		src, err := q.shouldItems[0].Build()
+		if err != nil {
+			return nil, err
+		}
+		boolClause["sort"] = src
+	} else if len(q.shouldItems) > 1 {
+		var clauses []interface{}
+		for _, subQuery := range q.shouldItems {
+			src, err := subQuery.Build()
+			if err != nil {
+				return nil, err
+			}
+			clauses = append(clauses, src)
+		}
+		boolClause["sort"] = clauses
+	}
 	// should
 	if len(q.shouldItems) == 1 {
 		src, err := q.shouldItems[0].Build()
