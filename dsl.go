@@ -73,38 +73,48 @@ func (dsl *dsl) Build() (any, error) {
 
 func (dsl *dsl) BuildJson() string {
 	var json = jsoniter.ConfigCompatibleWithStandardLibrary
-	query, _ := dsl.QueryDsl.Build()
-	mapDsl := map[string]any{
-		"query": query,
-	}
-	if dsl.Size > 0 {
-		mapDsl["size"] = dsl.Size
-	}
-	if dsl.From > 0 {
-		mapDsl["from"] = dsl.From
-	}
-
-	if len(dsl.Source) > 0 {
-		mapDsl["_source"] = dsl.Source
-	}
-	// sort
-	if len(dsl.OrderItems) == 1 {
-		src, err := dsl.OrderItems[0].Build()
-		if err != nil {
-			return ""
-		}
-		mapDsl["sort"] = src
-	} else if len(dsl.OrderItems) > 1 {
-		var clauses []interface{}
-		for _, subQuery := range dsl.OrderItems {
-			src, err := subQuery.Build()
-			if err != nil {
-				return ""
-			}
-			clauses = append(clauses, src)
-		}
-		mapDsl["sort"] = clauses
+	mapDsl, err := dsl.Build()
+	if err != nil {
+		return ""
 	}
 	strDsl, _ := json.MarshalToString(mapDsl)
 	return strDsl
 }
+
+// func (dsl *dsl) BuildJson() string {
+// 	var json = jsoniter.ConfigCompatibleWithStandardLibrary
+// 	query, _ := dsl.QueryDsl.Build()
+// 	mapDsl := map[string]any{
+// 		"query": query,
+// 	}
+// 	if dsl.Size > 0 {
+// 		mapDsl["size"] = dsl.Size
+// 	}
+// 	if dsl.From > 0 {
+// 		mapDsl["from"] = dsl.From
+// 	}
+
+// 	if len(dsl.Source) > 0 {
+// 		mapDsl["_source"] = dsl.Source
+// 	}
+// 	// sort
+// 	if len(dsl.OrderItems) == 1 {
+// 		src, err := dsl.OrderItems[0].Build()
+// 		if err != nil {
+// 			return ""
+// 		}
+// 		mapDsl["sort"] = src
+// 	} else if len(dsl.OrderItems) > 1 {
+// 		var clauses []interface{}
+// 		for _, subQuery := range dsl.OrderItems {
+// 			src, err := subQuery.Build()
+// 			if err != nil {
+// 				return ""
+// 			}
+// 			clauses = append(clauses, src)
+// 		}
+// 		mapDsl["sort"] = clauses
+// 	}
+// 	strDsl, _ := json.MarshalToString(mapDsl)
+// 	return strDsl
+// }
