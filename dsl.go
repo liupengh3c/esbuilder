@@ -8,12 +8,14 @@ type dsl struct {
 	Size       int64    `json:"size,omitempty"`
 	From       int64    `json:"from,omitempty"`
 	OrderItems []query  `json:"sort,omitempty"`
+	TrackTotal bool     `json:"track_total_hits,omitempty"`
 }
 
 func NewDsl() *dsl {
 	return &dsl{
 		Source:     make([]string, 0),
 		OrderItems: make([]query, 0),
+		TrackTotal: false,
 	}
 }
 
@@ -33,6 +35,9 @@ func (dsl *dsl) SetFrom(from int64) {
 }
 func (dsl *dsl) SetOrder(order query) {
 	dsl.OrderItems = append(dsl.OrderItems, order)
+}
+func (dsl *dsl) SetTrackTotal(track bool) {
+	dsl.TrackTotal = track
 }
 func (dsl *dsl) Build() (any, error) {
 	mapQuery, _ := dsl.QueryDsl.Build()
@@ -67,6 +72,9 @@ func (dsl *dsl) Build() (any, error) {
 			clauses = append(clauses, src)
 		}
 		mapDsl["sort"] = clauses
+	}
+	if dsl.TrackTotal {
+		mapDsl["track_total_hits"] = true
 	}
 	return mapDsl, nil
 }
