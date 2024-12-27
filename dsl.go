@@ -43,7 +43,7 @@ func (dsl *dsl) SetTrackTotal(track bool) {
 }
 
 func (dsl *dsl) SetSearchAfter(searchAfter []any) *dsl {
-	dsl.SearchAfter = append(dsl.SearchAfter, searchAfter...)
+	dsl.SearchAfter = searchAfter
 	return dsl
 }
 func (dsl *dsl) Build() (any, error) {
