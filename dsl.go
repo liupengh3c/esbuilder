@@ -3,19 +3,21 @@ package esbuilder
 import jsoniter "github.com/json-iterator/go"
 
 type dsl struct {
-	QueryDsl   query    `json:"query"`
-	Source     []string `json:"_source,omitempty"`
-	Size       int64    `json:"size,omitempty"`
-	From       int64    `json:"from,omitempty"`
-	OrderItems []query  `json:"sort,omitempty"`
-	TrackTotal bool     `json:"track_total_hits,omitempty"`
+	QueryDsl    query    `json:"query"`
+	Source      []string `json:"_source,omitempty"`
+	Size        int64    `json:"size,omitempty"`
+	From        int64    `json:"from,omitempty"`
+	OrderItems  []query  `json:"sort,omitempty"`
+	TrackTotal  bool     `json:"track_total_hits,omitempty"`
+	SearchAfter []any    `json:"search_after,omitempty"`
 }
 
 func NewDsl() *dsl {
 	return &dsl{
-		Source:     make([]string, 0),
-		OrderItems: make([]query, 0),
-		TrackTotal: false,
+		Source:      make([]string, 0),
+		OrderItems:  make([]query, 0),
+		SearchAfter: make([]any, 0),
+		TrackTotal:  false,
 	}
 }
 
@@ -39,6 +41,11 @@ func (dsl *dsl) SetOrder(order query) {
 func (dsl *dsl) SetTrackTotal(track bool) {
 	dsl.TrackTotal = track
 }
+
+func (dsl *dsl) SetSearchAfter(searchAfter []any) *dsl {
+	dsl.SearchAfter = append(dsl.SearchAfter, searchAfter...)
+	return dsl
+}
 func (dsl *dsl) Build() (any, error) {
 	mapQuery, _ := dsl.QueryDsl.Build()
 	mapDsl := map[string]any{
@@ -54,6 +61,10 @@ func (dsl *dsl) Build() (any, error) {
 
 	if len(dsl.Source) > 0 {
 		mapDsl["_source"] = dsl.Source
+	}
+
+	if len(dsl.SearchAfter) > 0 {
+		mapDsl["search_after"] = dsl.SearchAfter
 	}
 	// sort
 	if len(dsl.OrderItems) == 1 {
