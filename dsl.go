@@ -10,6 +10,7 @@ type dsl struct {
 	OrderItems  []query  `json:"sort,omitempty"`
 	TrackTotal  bool     `json:"track_total_hits,omitempty"`
 	SearchAfter []any    `json:"search_after,omitempty"`
+	Pit         query    `json:"pit,omitempty"`
 }
 
 func NewDsl() *dsl {
@@ -45,6 +46,9 @@ func (dsl *dsl) SetTrackTotal(track bool) {
 func (dsl *dsl) SetSearchAfter(searchAfter []any) *dsl {
 	dsl.SearchAfter = searchAfter
 	return dsl
+}
+func (dsl *dsl) SetPit(pit query) {
+	dsl.Pit = pit
 }
 func (dsl *dsl) Build() (any, error) {
 	mapQuery, _ := dsl.QueryDsl.Build()
@@ -86,6 +90,13 @@ func (dsl *dsl) Build() (any, error) {
 	}
 	if dsl.TrackTotal {
 		mapDsl["track_total_hits"] = true
+	}
+	if dsl.Pit != nil {
+		src, err := dsl.Pit.Build()
+		if err != nil {
+			return nil, err
+		}
+		mapDsl["pit"] = src
 	}
 	return mapDsl, nil
 }
