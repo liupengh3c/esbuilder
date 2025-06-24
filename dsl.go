@@ -11,6 +11,7 @@ type dsl struct {
 	TrackTotal  bool     `json:"track_total_hits,omitempty"`
 	SearchAfter []any    `json:"search_after,omitempty"`
 	Pit         query    `json:"pit,omitempty"`
+	Aggs        query    `json:"aggs,omitempty"`
 }
 
 func NewDsl() *dsl {
@@ -27,6 +28,10 @@ func (dsl *dsl) AddSource(source []string) {
 }
 func (dsl *dsl) SetQuery(query query) {
 	dsl.QueryDsl = query
+}
+
+func (dsl *dsl) SetAggs(aggs query) {
+	dsl.Aggs = aggs
 }
 
 func (dsl *dsl) SetSize(size int64) {
@@ -97,6 +102,14 @@ func (dsl *dsl) Build() (any, error) {
 			return nil, err
 		}
 		mapDsl["pit"] = src
+	}
+
+	if dsl.Aggs != nil {
+		src, err := dsl.Aggs.Build()
+		if err != nil {
+			return nil, err
+		}
+		mapDsl["aggs"] = src
 	}
 	return mapDsl, nil
 }
